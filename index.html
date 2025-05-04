@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yo Man - The Nexus</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* ** Core Palette ** */
+            --bg-color-deep-space: #0a0a1f;
+            --bg-color-nebula-1: #1a1a3f;
+            --bg-color-nebula-2: #4a0e4e; /* Deep Purple/Magenta */
+            --bg-color-star-1: #ff00ff; /* Magenta */
+            --bg-color-star-2: #00ffff; /* Cyan */
+            --text-color-primary: #e5e5ff; /* Slightly Lavender White */
+            --text-color-secondary: #a0a0cc; /* Muted Lavender */
+            --accent-glow: #ff00ff; /* Magenta */
+            --accent-highlight: #00ffff; /* Cyan */
+
+            /* ** Component Styling ** */
+            --container-bg: rgba(10, 10, 30, 0.75);
+            --container-blur: 18px;
+            --container-border: rgba(100, 100, 200, 0.2);
+            --container-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+            --profile-border-color: rgba(var(--accent-glow-rgb, 255, 0, 255), 0.6); /* Use RGB for opacity */
+            --profile-hover-glow: 0 0 25px 5px rgba(var(--accent-glow-rgb, 255, 0, 255), 0.5);
+            --link-bg: rgba(255, 255, 255, 0.06);
+            --link-border: rgba(255, 255, 255, 0.1);
+            --link-hover-bg: rgba(var(--accent-highlight-rgb, 0, 255, 255), 0.15);
+            --link-hover-border: rgba(var(--accent-highlight-rgb, 0, 255, 255), 0.7);
+            --link-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            --link-hover-shadow: 0 8px 25px rgba(var(--accent-highlight-rgb, 0, 255, 255), 0.3);
+            --footer-link-color: var(--text-color-secondary);
+            --footer-link-hover-color: var(--accent-highlight);
+            --focus-outline-color: var(--accent-highlight);
+
+            /* ** Transitions & Animations ** */
+            --transition-speed-fast: 0.25s;
+            --transition-speed-med: 0.4s;
+            --transition-curve: cubic-bezier(0.25, 0.8, 0.25, 1);
+            --entrance-stagger: 0.1s;
+
+            /* Helper RGB values for RGBA usage */
+            --accent-glow-rgb: 255, 0, 255;
+            --accent-highlight-rgb: 0, 255, 255;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(-45deg,
+                var(--bg-color-deep-space) 0%,
+                var(--bg-color-nebula-1) 25%,
+                var(--bg-color-nebula-2) 50%,
+                var(--bg-color-nebula-1) 75%,
+                var(--bg-color-deep-space) 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 25s ease infinite;
+            color: var(--text-color-primary);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align top for scroll */
+            min-height: 100vh;
+            padding: 50px 15px;
+            line-height: 1.7;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            position: relative; /* For pseudo-elements */
+        }
+
+        /* Starfield Effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            width: 100%; height: 100%;
+            background-image: radial-gradient(white 1px, transparent 1px);
+            background-size: 30px 30px;
+            opacity: 0.05;
+            z-index: -1; /* Behind everything */
+             animation: subtleMove 60s linear infinite alternate;
+        }
+
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes subtleMove {
+           from { background-position: 0 0; }
+           to { background-position: 50px 50px; }
+        }
+
+        .container {
+            max-width: 680px; /* Slightly narrower for focus */
+            width: 100%;
+            text-align: center;
+            padding: 40px 30px;
+            background: var(--container-bg);
+            backdrop-filter: blur(var(--container-blur));
+            -webkit-backdrop-filter: blur(var(--container-blur));
+            border-radius: 25px;
+            border: 1px solid var(--container-border);
+            box-shadow: var(--container-shadow);
+            position: relative; /* For pseudo-element */
+            z-index: 1;
+            animation: containerEnter 1s var(--transition-curve) forwards;
+            opacity: 0;
+            transform: translateY(30px) scale(0.95);
+            transition: transform 0.5s var(--transition-curve), box-shadow 0.5s var(--transition-curve);
+        }
+        .container:hover {
+             transform: scale(1.01);
+             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 30px rgba(var(--accent-glow-rgb), 0.2);
+        }
+
+        /* Inner Neon-like Border */
+        .container::before {
+            content: "";
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px; /* Offset slightly */
+            border-radius: 27px; /* Slightly larger radius */
+            border: 2px solid transparent;
+            background: linear-gradient(to bottom right, var(--accent-glow), var(--accent-highlight)) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: destination-out; /* Or: xor, destination-in */
+                  mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+                  mask-composite: exclude; /* Standard syntax */
+            z-index: -1;
+            opacity: 0.7;
+            transition: opacity var(--transition-speed-med) ease;
+        }
+        .container:hover::before {
+            opacity: 1;
+        }
+
+
+        @keyframes containerEnter {
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Profile Section */
+        .profile-section {
+             margin-bottom: 30px;
+             animation: elementFadeIn 0.8s var(--transition-curve) 0.3s forwards;
+             opacity: 0; transform: translateY(15px);
+        }
+
+        .profile-pic-wrapper {
+            position: relative;
+            display: inline-block; /* Needed for pseudo element positioning */
+            margin-bottom: 25px;
+        }
+
+        .profile-pic {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 6px solid var(--profile-border-color);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            transition: transform var(--transition-speed-med) var(--transition-curve), box-shadow var(--transition-speed-med) var(--transition-curve);
+            cursor: pointer;
+            display: block; /* Prevents potential bottom space */
+             background-color: rgba(255,255,255,0.1); /* Placeholder bg */
+        }
+
+        /* Rotating Gradient Border on Hover */
+        .profile-pic-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -8px; left: -8px; right: -8px; bottom: -8px; /* Controls border thickness & position */
+            border-radius: 50%;
+            border: 3px solid transparent;
+            background: conic-gradient(from var(--angle), transparent 0%, var(--accent-highlight) 5%, transparent 20%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+                  mask-composite: exclude;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity var(--transition-speed-med) ease;
+            animation: rotateBorder 4s linear infinite paused; /* Paused initially */
+            --angle: 0deg; /* CSS variable for animation */
+        }
+
+        @property --angle { /* Allows animating gradient angle */
+          syntax: '<angle>';
+          initial-value: 0deg;
+          inherits: false;
+        }
+
+        @keyframes rotateBorder {
+            to { --angle: 360deg; }
+        }
+
+        .profile-pic-wrapper:hover .profile-pic {
+            transform: scale(1.08);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5), var(--profile-hover-glow);
+        }
+        .profile-pic-wrapper:hover::before {
+            opacity: 1;
+            animation-play-state: running;
+        }
+
+        .profile-name {
+            font-family: 'Orbitron', sans-serif; /* Futuristic Font */
+            font-size: 2.8em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--text-color-primary);
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(var(--accent-glow-rgb), 0.5), 0 0 20px rgba(var(--accent-glow-rgb), 0.3);
+        }
+
+        .profile-tagline {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1em;
+            font-weight: 500;
+            color: var(--text-color-secondary);
+            margin-bottom: 30px;
+            max-width: 550px;
+            margin-left: auto;
+            margin-right: auto;
+            letter-spacing: 0.5px;
+            text-transform: uppercase; /* Added uppercase */
+        }
+
+        /* Bio Section */
+        .bio {
+            font-size: 1.05em;
+            max-width: 600px;
+            margin: 0 auto 40px auto;
+            color: var(--text-color-primary);
+            animation: elementFadeIn 0.8s var(--transition-curve) 0.4s forwards;
+            opacity: 0; transform: translateY(15px);
+        }
+
+        /* Shared Fade-in animation */
+        @keyframes elementFadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Links Section */
+        .links-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px; /* Increased gap */
+            margin-bottom: 40px;
+        }
+
+        .link-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--link-bg);
+            color: var(--text-color-primary);
+            padding: 18px 25px;
+            text-decoration: none;
+            border-radius: 15px; /* More rounded */
+            font-weight: 500;
+            font-size: 1.15em;
+            transition: transform var(--transition-speed-fast) var(--transition-curve),
+                        background var(--transition-speed-fast) var(--transition-curve),
+                        box-shadow var(--transition-speed-fast) var(--transition-curve),
+                        border-color var(--transition-speed-fast) var(--transition-curve);
+            box-shadow: var(--link-shadow);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--link-border);
+            animation: elementFadeIn 0.6s var(--transition-curve) forwards;
+            opacity: 0; transform: translateY(15px);
+            letter-spacing: 0.3px;
+        }
+
+        /* Stagger link entrance */
+        .links-container .link-button:nth-child(1) { animation-delay: calc(0.5s + 0 * var(--entrance-stagger)); }
+        .links-container .link-button:nth-child(2) { animation-delay: calc(0.5s + 1 * var(--entrance-stagger)); }
+        .links-container .link-button:nth-child(3) { animation-delay: calc(0.5s + 2 * var(--entrance-stagger)); }
+        .links-container .link-button:nth-child(4) { animation-delay: calc(0.5s + 3 * var(--entrance-stagger)); }
+        .links-container .link-button:nth-child(5) { animation-delay: calc(0.5s + 4 * var(--entrance-stagger)); }
+        .links-container .link-button:nth-child(6) { animation-delay: calc(0.5s + 5 * var(--entrance-stagger)); }
+        .links-container .link-button:nth-child(7) { animation-delay: calc(0.5s + 6 * var(--entrance-stagger)); }
+
+        /* Hover Shine Effect */
+        .link-button::after {
+            content: "";
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 60%);
+            transform: rotate(45deg) translateX(-75%) translateY(-25%);
+            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); /* Smoother shine */
+             opacity: 0;
+        }
+
+        .link-button:hover,
+        .link-button:focus {
+            background: var(--link-hover-bg);
+            transform: translateY(-5px) scale(1.03); /* Enhanced lift */
+            box-shadow: var(--link-hover-shadow);
+            border-color: var(--link-hover-border);
+            outline: none;
+        }
+
+        .link-button:hover::after {
+            transform: rotate(45deg) translateX(-25%) translateY(-25%);
+             opacity: 1;
+        }
+
+        .link-button:focus-visible { /* Clearer focus */
+             outline: 3px solid var(--focus-outline-color);
+             outline-offset: 3px;
+             border-color: var(--link-hover-border); /* Match hover border */
+             background: var(--link-hover-bg); /* Match hover bg */
+        }
+
+        .link-button:active {
+             transform: translateY(-2px) scale(1.01);
+             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+        }
+
+        .link-button svg {
+            width: 24px;
+            height: 24px;
+            margin-right: 18px; /* More space */
+            fill: currentColor;
+            flex-shrink: 0;
+            transition: transform var(--transition-speed-med) cubic-bezier(0.68, -0.6, 0.32, 1.6);
+        }
+
+        .link-button:hover svg {
+            transform: rotate(-10deg) scale(1.2); /* More dynamic icon */
+        }
+
+        /* Secondary / Fun Links - Distinct Style */
+        .secondary-links-container {
+            margin-top: 35px;
+            margin-bottom: 45px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px; /* Smaller gap */
+            animation: elementFadeIn 0.8s var(--transition-curve) forwards;
+            animation-delay: calc(0.5s + 7 * var(--entrance-stagger));
+            opacity: 0; transform: translateY(15px);
+        }
+
+        .secondary-link {
+            display: inline-flex;
+            align-items: center;
+            color: var(--text-color-secondary);
+            background-color: transparent; /* Outline style */
+            border: 1px solid rgba(var(--accent-highlight-rgb), 0.3);
+            text-decoration: none;
+            font-size: 0.9em;
+            padding: 7px 15px;
+            border-radius: 50px; /* Pill shape */
+            transition: all var(--transition-speed-fast) var(--transition-curve);
+        }
+
+        .secondary-link svg {
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+            fill: currentColor;
+            transition: transform 0.2s ease-out;
+        }
+
+        .secondary-link:hover,
+        .secondary-link:focus {
+            color: var(--accent-highlight);
+            background-color: rgba(var(--accent-highlight-rgb), 0.1);
+            border-color: rgba(var(--accent-highlight-rgb), 0.8);
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(var(--accent-highlight-rgb), 0.15);
+            text-decoration: none;
+            outline: none;
+        }
+
+        .secondary-link:hover svg {
+            transform: scale(1.1);
+        }
+
+        .secondary-link:focus-visible {
+             outline: 2px solid var(--accent-highlight);
+             outline-offset: 2px;
+             color: var(--accent-highlight);
+             border-color: rgba(var(--accent-highlight-rgb), 0.8);
+        }
+
+
+        /* Footer */
+        .footer {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid var(--container-border);
+             animation: elementFadeIn 0.8s var(--transition-curve) forwards;
+             animation-delay: calc(0.5s + 8 * var(--entrance-stagger));
+             opacity: 0; transform: translateY(15px);
+        }
+
+        .footer a {
+            font-family: 'Orbitron', sans-serif; /* Match heading */
+            color: var(--footer-link-color);
+            text-decoration: none;
+            font-size: 1em;
+            font-weight: 500;
+            transition: color var(--transition-speed-fast) ease-out, text-shadow var(--transition-speed-fast) ease-out;
+            letter-spacing: 1px;
+             text-transform: uppercase;
+        }
+
+        .footer a:hover,
+        .footer a:focus {
+            color: var(--footer-link-hover-color);
+            text-shadow: 0 0 8px rgba(var(--accent-highlight-rgb), 0.6), 0 0 15px rgba(var(--accent-highlight-rgb), 0.4);
+            outline: none;
+        }
+
+         .footer a:focus-visible {
+             outline: 2px dashed var(--footer-link-hover-color); /* Dashed focus for footer */
+             outline-offset: 3px;
+         }
+
+        /* Responsive Adjustments */
+        @media (max-width: 700px) {
+            body { padding: 30px 10px; }
+            .container { padding: 30px 20px; border-radius: 20px; }
+            .profile-pic { width: 130px; height: 130px; border-width: 5px; }
+            .profile-pic-wrapper::before { top: -7px; left: -7px; right: -7px; bottom: -7px; border-width: 2px;}
+            .profile-name { font-size: 2.4em; }
+            .profile-tagline { font-size: 1em; }
+            .bio { font-size: 1em; }
+            .link-button { padding: 16px 20px; font-size: 1.05em; border-radius: 12px; }
+            .link-button svg { width: 22px; height: 22px; margin-right: 15px; }
+            .secondary-links-container { gap: 12px; }
+            .secondary-link { font-size: 0.85em; padding: 6px 12px; }
+            .secondary-link svg { width: 15px; height: 15px; }
+            .footer { margin-top: 40px; padding-top: 25px; }
+            .footer a { font-size: 0.9em;}
+        }
+         @media (max-width: 400px) {
+             .profile-name { font-size: 2em; }
+             .profile-tagline { font-size: 0.9em; }
+             .link-button { font-size: 1em; padding: 15px 18px; }
+             .link-button svg { width: 20px; height: 20px; margin-right: 12px; }
+         }
+
+    </style>
+</head>
+<body>
+
+    <main class="container">
+
+        <!-- Profile Section -->
+        <div class="profile-section">
+            <div class="profile-pic-wrapper">
+                <img src="https://organicfeeds.com/wp-content/uploads/2022/09/01-Most-Popular-Breeds-of-Chickens-2.jpg" alt="Yo Man profile picture - a magnificent chicken" class="profile-pic">
+            </div>
+            <h1 class="profile-name">Yo Man</h1>
+            <p class="profile-tagline">AI Enthusiast • Prompt Engineer • Automation Builder • AI Agent & Web App Developer</p>
+        </div>
+
+        <!-- Short Bio -->
+        <p class="bio">
+            I specialize in prompt engineering and automations using Make.com.<br>
+            I build AI agents with ChatGPT & Claude, and web apps with Cursor, Lovable, Base44 & Windsurf.<br>
+            I craft videos (Runway, Pika) and images (Midjourney, Ideogram, GPT Images, Kling) to simplify life and work.
+        </p>
+
+        <!-- Primary Links -->
+        <section class="links-container" aria-label="Primary Links">
+            <a href="https://demo.quant-insights.example" target="_blank" rel="noopener noreferrer" class="link-button" aria-label="Explore Quant Insights (opens in new tab)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 18h1.6V6H4v12zm3.2 0h1.6V10H7.2v8zm3.2 0h1.6V13h-1.6v5zm3.2 0h1.6V3h-1.6v15zM20 18h1.6V8H20v10z"/></svg>
+                Quant Insights
+            </a>
+            <a href="https://github.com/YourUsername/TradingBot" target="_blank" rel="noopener noreferrer" class="link-button" aria-label="View AI Trading Bots on GitHub (opens in new tab)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19.9 11.6L17 10V7c0-1.1-.9-2-2-2h-3c-1.1 0-2 .9-2 2v1H8v2l-3.1.9c-.6.2-.9.8-.7 1.4l.7 1.7c.1.3.3.6.6.7l1.5.6v1.6c0 .5.4.9.9.9h8.2c.5 0 .9-.4.9-.9v-1.6l1.5-.6c.3-.1.5-.4.6-.7l.7-1.7c.2-.6-.1-1.2-.7-1.4zM12 15c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm2-8h-4V6h4v1z"/></svg>
+                AI Trading Bots
+            </a>
+            <a href="https://youtube.com/YourChannel/21-13" target="_blank" rel="noopener noreferrer" class="link-button" aria-label="Watch the '21:13' Game Trailer on YouTube (opens in new tab)">
+                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10 16.5l6-4.5-6-4.5v9zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+                ’21:13’ Game Trailer
+            </a>
+            <a href="https://menucraft.app" target="_blank" rel="noopener noreferrer" class="link-button" aria-label="Visit the MenuCraft website (opens in new tab)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.61.07-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h1.9c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                MenuCraft
+            </a>
+             <a href="https://linkedin.com/in/YourProfile" target="_blank" rel="noopener noreferrer" class="link-button" aria-label="Connect on LinkedIn (opens in new tab)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14zm-8.29 14H8V9.71h2.71V17zm-1.35-8.4c-.9 0-1.63-.73-1.63-1.63s.73-1.64 1.63-1.64 1.64.74 1.64 1.64-.73 1.63-1.64 1.63zM17 17h-2.71v-4.5c0-1.07-.02-2.44-1.49-2.44s-1.72 1.17-1.72 2.36V17H8.38V9.71H11v1.27h.04c.38-.72 1.31-1.49 2.67-1.49 2.86 0 3.38 1.88 3.38 4.32V17z"/></svg>
+                LinkedIn
+            </a>
+            <a href="https://github.com/YourUsername" target="_blank" rel="noopener noreferrer" class="link-button" aria-label="Check out my GitHub Profile (opens in new tab)">
+                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.5.5.09.68-.21.68-.48 0-.23-.01-.86-.01-1.7C6.73 19.88 6.14 18 6.14 18c-.44-1.12-1.08-1.42-1.08-1.42-.88-.6.07-.59.07-.59.98.07 1.49 1.01 1.49 1.01.87 1.49 2.28 1.06 2.84.81.09-.63.34-1.06.62-1.3C8.37 16.18 5.6 15.2 5.6 11.13c0-1.07.38-1.95 1.01-2.64-.1-.25-.44-1.25.1-2.61 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33s1.71.11 2.5.33c1.91-1.29 2.75-1.02 2.75-1.02.54 1.36.2 2.36.1 2.61.63.69 1.01 1.57 1.01 2.64 0 4.08-2.77 4.95-5.47 5.26.35.3.66.9.66 1.82 0 1.31-.01 2.37-.01 2.69 0 .27.18.57.69.48C19.13 20.17 22 16.42 22 12c0-5.52-4.48-10-10-10z"/></svg>
+                GitHub
+            </a>
+            <a href="https://twitter.com/YourHandle" target="_blank" rel="noopener noreferrer" class="link-button" aria-label="Follow me on Twitter / X (opens in new tab)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.839L6.04 4.03H4.06z"/></svg>
+                Twitter / X
+            </a>
+        </section>
+
+        <!-- Secondary / Fun Links -->
+        <section class="secondary-links-container" aria-label="Secondary Links">
+            <a href="https://instagram.com/YourHandle" target="_blank" rel="noopener noreferrer" class="secondary-link" aria-label="See behind-the-scenes on Instagram (opens in new tab)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4c0 3.2-2.6 5.8-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8C2 4.6 4.6 2 7.8 2zm-.2 2C6.1 4 4 6.1 4 7.8v8.4c0 1.7 1.3 3 3 3h8.4c1.7 0 3-1.3 3-3V7.8c0-1.7-1.3-3-3-3H7.6zm4.6 3.4c2.7 0 4.9 2.2 4.9 4.9s-2.2 4.9-4.9 4.9-4.9-2.2-4.9-4.9 2.2-4.9 4.9-4.9zm0 1.8c-1.7 0-3.1 1.4-3.1 3.1s1.4 3.1 3.1 3.1 3.1-1.4 3.1-3.1-1.4-3.1-3.1-3.1zm6.3-4.5c-.8 0-1.4.6-1.4 1.4s.6 1.4 1.4 1.4 1.4-.6 1.4-1.4-.6-1.4-1.4-1.4z"/></svg>
+                Instagram
+            </a>
+            <a href="mailto:your.email@example.com" class="secondary-link" aria-label="Send me an Email">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-.4 4.25l-7.07 4.42c-.32.2-.74.2-1.06 0L4.4 8.25V6.5l7.6 4.75L19.6 6.5v1.75z"/></svg>
+                Contact Me
+            </a>
+            <a href="https://blog.yourname.com" target="_blank" rel="noopener noreferrer" class="secondary-link" aria-label="Read my Blog for deep dives (opens in new tab)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M14 17H4v2h10v-2zm6-8H4v2h16V9zM4 15h16v-2H4v2zM4 5v2h16V5H4z"/></svg>
+                Blog
+            </a>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <a href="#link-to-full-resume-or-bio-page" aria-label="Find out more about me">More About Me</a>
+        </footer>
+
+    </main>
+
+    <!-- Minimal JS for potential future enhancements, currently not strictly needed -->
+    <script>
+         console.log("The Nexus is Online.");
+         // Could add JS for more complex particle effects or interactions if needed later.
+    </script>
+
+</body>
+</html>
